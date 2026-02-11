@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my Valentine?</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3e5f5; /* Soft Purple Background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(106, 27, 154, 0.1);
+            max-width: 90%;
+            width: 450px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        h1 {
+            color: #6a1b9a;
+            font-size: 1.8rem;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .warning-text {
+            color: #8e24aa;
+            font-size: 0.9rem;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .gif-container img {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            border-radius: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column; /* Stack vertically to prevent overlap */
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        /* Desktop specific: side-by-side buttons until they get too big */
+        @media (min-width: 600px) {
+            .buttons {
+                flex-direction: row;
+            }
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: bold;
+        }
+
+        #yesBtn {
+            background-color: #8e24aa;
+            color: white;
+            z-index: 10;
+        }
+
+        #noBtn {
+            background-color: #ff5252;
+            color: white;
+        }
+
+        #success-container { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="question-container">
+        <div class="gif-container">
+            <img id="mainImage" src="ninja.png" alt="Purple Ninja">
+        </div>
+        <h1 id="questionText">Will you be my Valentine? 💖</h1>
+        
+        <div class="buttons">
+            <button id="yesBtn" onclick="acceptDate()">Yes</button>
+            <button id="noBtn" onclick="rejectDate()">No</button>
+        </div>
+
+        <p class="warning-text" id="warning">don't press NO, if you don't want to make me mad 😳</p>
+    </div>
+
+    <div class="container" id="success-container">
+        <div class="gif-container">
+            <img src="success.gif" alt="Happy ending">
+        </div>
+        <h1 style="color: #4a148c;">Yippie, we have a date! 🎉</h1>
+        <p style="color: #6a1b9a; font-weight: bold;">I love you!</p>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        
+        // This matches the filenames you are downloading
+        const sadGifs = [
+            "sadbear1.gif",
+            "sadbear2.gif",
+            "sadbear3.gif",
+            "sadbear4.gif"
+        ];
+
+        function rejectDate() {
+            const mainImage = document.getElementById('mainImage');
+            const questionText = document.getElementById('questionText');
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+
+            // 1. Change to the local sad bear gifs
+            if (noClickCount < sadGifs.length) {
+                mainImage.src = sadGifs[noClickCount];
+            }
+
+            noClickCount++;
+
+            // 2. Make Yes button grow (using padding and font size for better layout)
+            let newFontSize = 1.1 + (noClickCount * 1.2);
+            let newPadding = 15 + (noClickCount * 10);
+            yesBtn.style.fontSize = newFontSize + 'rem';
+            yesBtn.style.padding = newPadding + 'px ' + (newPadding * 2) + 'px';
+
+            // 3. Update Text
+            if (noClickCount === 1) {
+                questionText.innerText = "Are you sure? 😢";
+                noBtn.innerText = "Yes, I'm sure";
+            } else if (noClickCount === 2) {
+                questionText.innerText = "Really really sure? 🥺";
+                noBtn.innerText = "Wait, no...";
+            } else if (noClickCount === 3) {
+                questionText.innerText = "You're breaking my heart! 😭";
+                noBtn.innerText = "Stop it!";
+            } else if (noClickCount === 4) {
+                questionText.innerText = "I'm gonna cry... 💔";
+                noBtn.innerText = "LAST CHANCE!";
+            } else {
+                // Remove NO button after 4 tries
+                noBtn.style.display = "none";
+                document.getElementById('warning').style.display = "none";
+                questionText.innerText = "Resistance is futile! Say Yes! 😈";
+                mainImage.src = "evilbear.gif"; 
+            }
+        }
+
+        function acceptDate() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('success-container').style.display = 'flex';
+            
+            // Create falling purple hearts
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = '💜';
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '-50px';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.animation = 'fall 3s linear';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 3000);
+            }, 200);
+        }
+
+        // Animation for hearts
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
